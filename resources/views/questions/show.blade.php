@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="card-header">
+                    <div class="card-title">
                         <div class="d-flex align-items-center">
                             <h1>{{ $question->title }}</h1>
                             <div class="ml-auto">
@@ -14,16 +14,32 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    
+                    <hr>
+                    
+                    <div class="media">
+                        <div class="d-flex flex-column vote-controls">
+                            <a title="This question is useful" class="vote-up">
+                                <i class="fas fa-caret-up fa-2x"></i>
+                            </a>
+                            <span class="vote-count">1230</span>
+                            <a title="Question is useless" class="vote-down off">
+                                <i class="fas fa-caret-down fa-2x"></i>
+                            </a>
+                            <a title="Click to mark as favorite question" class="favorite mt-2 favorited">
+                                <i class="fas fa-star fa-lg"></i>
+                            </a>
+                            <span class="favorite-count"> 123</span>
+                        </div>
                         <div class="media-body">
                             {!! $question->body_html !!}
                             <div class="float-right">
                                 <span class="text-muted">Answered {{ $question->created_date }}</span>
-                                <div class="media">
+                                <div class="media mt-2">
                                     <a href="{{$question->user->url}}" class="pr-2">
                                         <img src="{{ $question->user->avatar }}">
                                     </a>
-                                    <div class="media-body">
+                                    <div class="media-body mt-1">
                                         <a href="{{ $question->user->url }}"> {{ $question->user->name }}</a>
                                     </div>
                                 </div>
@@ -34,36 +50,10 @@
             </div>
         </div>
     </div>
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card_title">
-                        <h2>{{ $question->answers_count . " " . str_plural('Answer', $question->answers_count) }}</h2>
-                    </div>
-                    <hr>
-                    @foreach ($question->answers as $answer)
-                    <div class="media">
-                        <div class="media-body">
-                            {!! $answer->body_html !!}
-                            <div class="float-right">
-                                <span class="text-muted">Answered {{ $answer->created_date }}</span>
-                                <div class="media">
-                                    <a href="{{$answer->user->url}}" class="pr-2">
-                                        <img src="{{ $answer->user->avatar }}">
-                                    </a>
-                                    <div class="media-body">
-                                        <a href="{{ $answer->user->url }}"> {{ $answer->user->name }}</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('answers._index', [
+        'answers' => $question->answers,
+        'answersCount' => $question->answers_count,
+    ])
+    @include('answers._create')
 </div>
 @endsection
