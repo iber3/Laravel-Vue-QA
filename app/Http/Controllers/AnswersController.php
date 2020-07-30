@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Question;
+use App\Answer;
 
 class AnswersController extends Controller
 {
@@ -17,31 +18,32 @@ class AnswersController extends Controller
         return back()->with('success', "Your answer has been submitted successfully");
     }
 
-    public function edit(Answer $answer)
+    public function edit(Question $question, Answer $answer)
     {
+        $this->authorize('update', $answer);
         
+        return view('answers\_edit', compact('question', 'answer'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function update(AskQuestionRequest $request, Question $question)
+
+    public function update(Request $request, Question $question, Answer $answer)
     {
+       $this->authorize('update', $answer);
        
+       $answer->update($request->validate([
+           'body' => 'required',
+       ]));
+       
+       return redirect()->route('questions.show', $question->slug)->with('success', 'Your answer has been updated');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Question $question)
+
+    public function destroy(Question $question, Answer $answer)
     {
+        $this->authorize('delete', $answer);
         
+        $answer->delete();
+        
+        return back()->with('success', 'Your answer has been deleted');
     }
 }
