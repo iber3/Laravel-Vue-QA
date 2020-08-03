@@ -6,20 +6,50 @@
                         <h2>{{ $answersCount . " " . str_plural('Answer', $answersCount) }}</h2>
                     </div>
                     <hr>
-                    @foreach ($answers as $answer)
+                                   @foreach ($answers as $answer)
                     <div class="media">
-                         <div class="d-flex flex-column vote-controls">
-                            <a title="This answer is useful" class="vote-up">
+                        <div class="d-fex flex-column vote-controls">
+                            <a title="This answer is useful" 
+                                class="vote-up {{ Auth::guest() ? 'off' : '' }}"
+                                onclick="event.preventDefault(); document.getElementById('up-vote-answer-{{ $answer->id }}').submit();"
+                                >
                                 <i class="fas fa-caret-up fa-2x"></i>
                             </a>
-                            <span class="vote-count">1230</span>
-                            <a title="Answer is useless" class="vote-down off">
+                            <form id="up-vote-answer-{{ $answer->id }}" action="/answers/{{ $answer->id }}/vote" method="POST" style="display:none;">
+                                @csrf
+                                <input type="hidden" name="vote" value="1">
+                            </form>
+
+                            <span class="votes-count">{{ $answer->votes_count }}</span>
+
+                            <a title="This answer is not useful" 
+                                class="vote-down {{ Auth::guest() ? 'off' : '' }}"
+                                onclick="event.preventDefault(); document.getElementById('down-vote-answer-{{ $answer->id }}').submit();"
+                                >
                                 <i class="fas fa-caret-down fa-2x"></i>
                             </a>
-                            <a title="Mark this answer as best" class="{{ $answer->status }} mt-2">
-                                <i class="fas fa-check fa-lg"></i>
-                            </a>
-                            <span class="favorite-count"> 123</span>
+                            <form id="down-vote-answer-{{ $answer->id }}" action="/answers/{{ $answer->id }}/vote" method="POST" style="display:none;">
+                                @csrf
+                                <input type="hidden" name="vote" value="-1">
+                            </form>
+
+
+                            @can ('acceptVote', $answer)
+                                <a title="Mark this answer as best" class="{{ $answer->status }} mt-2"
+                                   onclick="event.preventDefault(); document.getElementById('accept-answer-{{$answer->id}}').submit();">
+                                    <i class="fas fa-check fa-lg"></i>
+                                </a>
+                                <form id="accept-answer-{{$answer->id}}" action=" {{ route('answers.accept', $answer->id) }}" method="POST" style="display:none;">
+                                    @csrf
+                                </form>
+                            @else
+                                @if ($answer->is_best)
+                                    <a title=Question owner marked this answer as the best" class="{{ $answer->status }} mt-2"
+                                    >
+                                    <i class="fas fa-check fa-lg"></i>
+                                    </a>
+                                @endif
+                            @endcan
                         </div>
                         <div class="media-body">
                             {!! $answer->body_html !!}
