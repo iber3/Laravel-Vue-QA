@@ -8,6 +8,8 @@ class Question extends Model
 {
     use VotableT;
     protected $fillable = ['title', 'body'];
+
+    protected $appends = ['created_date'];
     
     public function user(){
         return $this->belongsTo(User::class);
