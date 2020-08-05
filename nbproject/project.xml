@@ -7,6 +7,10 @@
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>csrf</word>
+            <word>elseif</word>
+            <word>endhp</word>
+            <word>endphp</word>
+            <word>php</word>
         </spellchecker-wordlist>
     </configuration>
 </project>
