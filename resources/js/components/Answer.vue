@@ -1,36 +1,84 @@
 <script>
 export default {
-    props: [
-        'answer'
-    ],
-
-    data() {
+    props: ['answer'],
+    data () {
         return {
             editing: false,
             body: this.answer.body,
             bodyHtml: this.answer.body_html,
             id: this.answer.id,
-            questionId: this.answer.question_id
+            questionId: this.answer.question_id,
+            beforeEditCache: null
         }
-
     },
 
     methods: {
-        update() {
-            axios.post(`/questions/${this.questionId}/answers/${this.id}`, {
-                body: this.body,
-                _method: 'patch'
+        edit () {
+            this.beforeEditCache = this.body;
+            this.editing = true;
+        },
+        cancel () {
+            this.body = this.beforeEditCache;
+            this.editing = false;
+        },
+        update () {
+            axios.patch(this.endpoint, {
+                body: this.body
             })
-            .then(res =>{
-                console.log(res);
-                this.editing = false;   
+            .then(res => {                
+                this.editing = false;
                 this.bodyHtml = res.data.body_html;
-                alert(res.data.message);
+                this.$toast.success(res.data.message, "Success", {timeout: 3000});
             })
             .catch(err => {
-                console.log("Something went wrong");
+                this.$toast.error(err.data.message, "Error", {timeout: 3000});             
             });
-        }
+        },
+        destroy() {
+            this.$toast.question('Are you sure about that?', "Confirm", {
+                timeout: 20000,
+                close: false,
+                overlay: true,
+                displayMode: 'once',
+                id: 'question',
+                zindex: 999,
+                title: 'Hey',
+                position: 'center',
+                buttons: [
+                    ['<button><b>YES</b></button>', (instance, toast) => {
+                            axios.delete(this.endpoint)
+                            .then(res => {
+                                $(this.$el).fadeOut(500, () => {
+                                    this.$toast.success(res.data.message, "Success", {timeout: 3000});
+                                })
+                            })
+
+                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                    }, true],
+                    ['<button>NO</button>', function (instance, toast) {
+            
+                        instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+            
+                    }],
+                ],
+                onClosing: function(instance, toast, closedBy){
+                    console.info('Closing | closedBy: ' + closedBy);
+                },
+                onClosed: function(instance, toast, closedBy){
+                    console.info('Closed | closedBy: ' + closedBy);
+                }
+            });
+
+        }        
     },
+    computed: {
+        isInvalid () {
+            return this.body.length < 10;
+        },
+
+        endpoint() {
+            return `/questions/${this.questionId}/answers/${this.id}`;
+        }
+    }
 }
 </script>

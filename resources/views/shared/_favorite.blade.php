@@ -9,4 +9,3 @@
     @method('DELETE');
     @endif
 </form>
-<span class="favorite-count"> {{$model->favorites_count}} </span>
