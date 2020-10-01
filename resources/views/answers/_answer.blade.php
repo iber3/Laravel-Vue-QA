@@ -1,9 +1,10 @@
 <answer :answer="{{$answer}}" inline-template>
     <div class="media post">
         <div class="d-fex flex-column vote-controls">      
-            @include('shared._vote', [
+            {{-- @include('shared._vote', [
                 'model' => $answer,
-            ])
+            ]) --}}
+        <vote :model="{{$model}}" :name="'answer'"></vote>
         </div>
         <div class="media-body">
             <form v-if="editing" @submit.prevent="update">
