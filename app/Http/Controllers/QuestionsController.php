@@ -20,6 +20,14 @@ class QuestionsController extends Controller
         return view('questions.index', compact('questions'));
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->get('search');
+
+        $questions = Question::where('title', 'like', '%' . $search . '%' )->orWhere('body', 'like', '%' . $search . '%' )->with('user')->latest()->paginate(5);
+        return view('questions.index', compact('questions'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *

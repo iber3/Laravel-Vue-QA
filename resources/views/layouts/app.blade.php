@@ -33,7 +33,9 @@
                     <ul class="navbar-nav mr-auto">
 
                     </ul>
-
+                    <form class="form-inline my-2 my-lg-0" action="/search" method="GET">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="search" aria-label="search">
+                      </form>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
